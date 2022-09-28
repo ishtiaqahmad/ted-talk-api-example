@@ -1,0 +1,278 @@
+openapi: 3.0.2
+info:
+  title: Ted-Talk
+  description: "A TED talks api"
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: ishtiaq.ahmad@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1-SNAPSHOT
+servers:
+  - url: https://api.server.test/v1
+tags:
+  - name: user
+    description: Operations about user
+    externalDocs:
+      description: Find out more about TED talks
+      url: http://swagger.io
+paths:
+  /tedTalk:
+    post:
+      tags:
+        - tedTalk
+      summary: Create tedTalk
+      description: Create tedTalk functionality
+      operationId: createTedTalk
+      requestBody:
+        description: Created tedTalk object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/TedTalk'
+        required: true
+      responses:
+        default:
+          description: successful operation
+          content: { }
+      x-codegen-request-body-name: body
+  /tedTalk/{id}:
+    get:
+      tags:
+        - tedTalk
+      summary: Get TedTalk by id
+      operationId: getTedTalkById
+      parameters:
+        - name: id
+          in: path
+          description: 'The tedTalk that needs to be fetched.'
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TedTalk'
+        404:
+          description: TedTalk not found
+          content: { }
+    put:
+      tags:
+        - tedTalk
+      summary: Updated tedTalk
+      description: This can only be done by the logged in user.
+      operationId: updateTedTalk
+      parameters:
+        - name: id
+          in: path
+          description: id that need to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Updated TedTalk object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/TedTalk'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TedTalk'
+        400:
+          description: Invalid TedTalk id supplied
+          content: { }
+        404:
+          description: TedTalk not found
+          content: { }
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+        - tedTalk
+      summary: Delete TedTalk
+      description: This can only be done by the logged in user.
+      operationId: deleteTedTalk
+      parameters:
+        - name: id
+          in: path
+          description: The id that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: operation successful
+          content: { }
+        400:
+          description: Invalid TedTalk id supplied
+          content: { }
+        404:
+          description: TedTalk not found
+          content: { }
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: Create user functionality
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        default:
+          description: successful operation
+          content: { }
+      x-codegen-request-body-name: body
+  /user/{username}:
+    get:
+      tags:
+        - user
+      summary: Get user by user name
+      operationId: getUserByName
+      parameters:
+        - name: username
+          in: path
+          description: 'The name that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        404:
+          description: User not found
+          content: { }
+    put:
+      tags:
+        - user
+      summary: Updated user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: name that need to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Updated user object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Invalid user supplied
+          content: { }
+        404:
+          description: User not found
+          content: { }
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+        - user
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: operation successful
+          content: { }
+        400:
+          description: Invalid username supplied
+          content: { }
+        404:
+          description: User not found
+          content: { }
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        userStatus:
+          type: integer
+          description: User Status
+          format: int32
+    TedTalk:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        author:
+          type: string
+        title:
+          type: string
+        views:
+          type: integer
+          format: int64
+        likes:
+          type: integer
+          format: int64
+        date:
+          type: string
+          format: date
+        link:
+          type: string
+          format: uri
+  securitySchemes:
+    ted_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://api.server.test/oauth/dialog
+          scopes:
+            write:users: modify users
+            read:users: read users
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
